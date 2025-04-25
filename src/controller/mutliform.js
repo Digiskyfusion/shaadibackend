@@ -57,7 +57,7 @@ const multiForm = async (req, res) => {
 
 const login = async (req, res) => {
   const { identifier, password } = req.body;
-  console.log("Request Body:", req.body);
+  // console.log("Request Body:", req.body);
 
   if (!identifier || !password) {
     return res.status(400).json({ message: "All fields are required." });

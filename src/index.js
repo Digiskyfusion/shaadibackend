@@ -6,7 +6,8 @@ const path = require("path");
 const formUser= require("./routes/userRoute")
 const profileUser= require("./routes/profileRoute")
 const authRoutes= require("./routes/authRoute")
-
+const comProfile= require("./routes/detailRoute")
+const patnerRoutes= require("./routes/patnerRoute")
 
 
 app.use(cors());
@@ -19,6 +20,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/user",formUser)
 app.use("/api", profileUser)
 app.use('/api/auth', authRoutes);
+app.use('/api/user', comProfile);
+app.use("/api/patner", patnerRoutes);
 
 db();
 app.listen(3000, ()=>
