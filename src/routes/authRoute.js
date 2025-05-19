@@ -7,4 +7,5 @@ router.route('/send-otp').post(protect,sendOTP);
 router.route('/verify-otp').put(protect,verifyOTP);
 router.route('/resend-otp').post(protect,resendOTP);
 
+
 module.exports = router;

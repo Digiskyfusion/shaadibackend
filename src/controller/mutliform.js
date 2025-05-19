@@ -1,8 +1,10 @@
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Profile= require("../model/ProfileSchema")
+const randomstring   = require("randomstring");
+const sendMailNodemailer  = require("../utils/emailSender");
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // It's better to use environment variables
 
 const multiForm = async (req, res) => {
   try {
@@ -104,8 +106,208 @@ const login = async (req, res) => {
   }
 };
 
+// get user by id
+
+const getById = async (req, res) => {
+  try{
+   const userId = req.params.id;
+    if(!userId){
+     return res.status(401).json({ message: "Invalid userId" });
+    }
+ 
+    const user = await User.findById({_id:userId})
+ 
+    if(!user){
+     return res.status(401).json({ message: "No user found." });
+    }
+    return res.status(200).json({user})
+ 
+  }catch(error){
+   return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+ }
+
+ //get by gender
+ const getBygender= async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Step 1: Get gender of logged-in user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const userGender = user.gender;
+    // console.log(userGender);
+    
+
+    // Step 2: Determine opposite gender
+    let oppositeGender;
+
+    if (userGender === 'Male') {
+      oppositeGender = 'Female';
+    } else if (userGender === 'Female') {
+      oppositeGender = 'Male';
+    } else if (userGender === 'Other') {
+      oppositeGender = ['Male', 'Female'];
+    } else {
+      return res.status(400).json({ error: 'Invalid gender' });
+    }
+    // Step 3: Find profiles where user's gender is opposite
+    const profiles = await Profile.find()
+      .populate({
+        path: 'userId',
+        match: { gender: oppositeGender },
+        select: 'firstName lastName profileImage dob gender'
+      });
+
+    // Step 4: Filter out profiles where userId didn’t match (no opposite gender)
+    const filteredProfiles = profiles.filter(profile => profile.userId);
+
+    res.status(200).json(filteredProfiles);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+// signle user by profile
+const getProfileWithUser = async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ userId: req.params.userId }).populate('userId', 'firstName  lastName profileImage dob emailId mobileNumber gender')
+    // .populate('religion.userId','age religion height growup diet community healthinformation disability gothram highestqualification workingwith currentresidence stateofresidence residencystatus zippincode'); // Populating partner preferences;
+    
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+    // const userData = profile.userId;
+    // console.log(userData);
+    
+
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+//  update user
+ const updateUser=  async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user:", error.message);
+    res.status(500).json({ message: "error in updating user." });
+  }
+};
 
 
+//forget password
+const forgetPassword = async (req, res) => {
+  try {
+      let { emailId } = req.body;
+      let user = await User.findOne({ emailId });
+      console.log(user.firstName);
+      
+    
+      
+      if (user) {
+          let randomString = randomstring.generate();
+          let expirationTime = Date.now() + 60 * 60 * 1000;
+          await User.updateOne({ emailId }, { $set: { token: randomString ,tokenExpiresAt:new Date(expirationTime) } });
+          try {
+            // Send email
+            await sendMailNodemailer({
+              to: emailId,
+              subject: "Welcome to  reset password",
+              text: "hello",
+              html: `<p>Hi ${user.firstName},</p>
+              <p>Please click the link below to reset your password:</p>
+              <a href="http://localhost:5173/reset-password?token=${randomString}" target="_blank">Reset Password</a>
+              <p>If you did not request this, please ignore this email.</p>`,
+            });
+        
+            return res.status(200).json({
+              success: true,
+              message: "Please check your email inbox to reset your password."
+          });
+          } catch (error) {
+           return res.status(500).json({ message: "Failed to send mail", error });
+          }
+      } else {
+          return res.status(404).json({
+              success: false,
+              message: "This email does not exist."
+          });
+      }
+  } catch (error) {
+      console.log("Error in forgetPassword:", error);
+      return res.status(500).send("Error from forgetPassword route.");
+  }
+};
 
 
-module.exports ={multiForm,login};
+//rest password
+const resetPassword = async (req, res) => {
+  try {
+      const token = req.query.token;
+      // console.log(token);
+      
+      let tokenData = await User.findOne({ token });
+  //  console.log(tokenData);
+
+      if (tokenData) {
+          const { password } = req.body;
+
+          // Hash the new password
+          bcrypt.genSalt(10, async (err, salt) => {
+              if (err) {
+                  return res.status(500).send({ success: false, message: "Error generating salt" });
+              }
+
+              // Hash the password
+              bcrypt.hash(password, salt, async (err, hash) => {
+                  if (err) {
+                      return res.status(500).send({ success: false, message: "Error hashing password" });
+                  }
+
+                  // Update the user password in the database
+                  let updatedUser = await User.findByIdAndUpdate(
+                       tokenData._id,
+                      { $set: { password: hash, token: "" } },
+                      { new: true }
+                  );
+
+                  // Respond with the updated user data
+                  res.status(200).json({
+                      success: true,
+                      message: "User password has been reset ssuccessfully.",
+                      data: updatedUser,
+                  });
+              });
+          });
+      } else {
+          return res.status(404).send({ success: false, message: "The link has expired or is invalid hihi." });
+      }
+  } catch (error) {
+      console.error(error);
+      return res.status(500).send({ success: false, message: "An error occurred during password reset." });
+  }
+};
+
+
+module.exports ={multiForm,login,getById,updateUser,getBygender,getProfileWithUser,forgetPassword,resetPassword};

@@ -9,7 +9,7 @@ const patnerProfiles = new mongoose.Schema({
   age: { type: Number },
   religion: { type: String }, // FIX: Changed from Date to String
   maritalstatus: { type: String },
-  height: { type: Number },
+  height: { type: String },
   growup: { type: String },
   diet: { type: String },
   community: { type: String },

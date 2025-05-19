@@ -12,7 +12,7 @@ const protect = async (req, res, next) => {
         if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        console.log("decoded",decoded);
+        // console.log("decoded",decoded);
 
         const email= decoded.email
         
