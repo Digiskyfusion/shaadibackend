@@ -30,12 +30,12 @@ const userSchema = new mongoose.Schema({
   type: Number,
   default: 0,
 },
-deleteEmailOTP: { type: String },
-deletePhoneOTP: { type: String },
-isDeleteEmailOTPVerified: { type: Boolean, default: false },
-isDeletePhoneOTPVerified: { type: Boolean, default: false },
-  isVerifiedEmail: { type: Boolean, default: false },
-  isVerifiedPhone: { type: Boolean, default: false },
+// deleteEmailOTP: { type: String },
+// deletePhoneOTP: { type: String },
+// isDeleteEmailOTPVerified: { type: Boolean, default: false },
+// isDeletePhoneOTPVerified: { type: Boolean, default: false },
+//   isVerifiedEmail: { type: Boolean, default: false },
+//   isVerifiedPhone: { type: Boolean, default: false },
 }, { timestamps: true }); // optional: adds createdAt & updatedAt fields
 
 module.exports = mongoose.model("User", userSchema);
