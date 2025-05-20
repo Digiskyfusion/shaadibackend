@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null, // add this line
   },
+   credits: {
+  type: Number,
+  default: 0,
+},
+deleteEmailOTP: { type: String },
+deletePhoneOTP: { type: String },
+isDeleteEmailOTPVerified: { type: Boolean, default: false },
+isDeletePhoneOTPVerified: { type: Boolean, default: false },
   isVerifiedEmail: { type: Boolean, default: false },
   isVerifiedPhone: { type: Boolean, default: false },
 }, { timestamps: true }); // optional: adds createdAt & updatedAt fields
