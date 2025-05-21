@@ -8,6 +8,7 @@ const profileUser= require("./routes/profileRoute")
 const authRoutes= require("./routes/authRoute")
 const patnerRoutes= require("./routes/patnerRoute")
 const deleteroutes= require("./routes/DeleteprofileRoute")
+const paymentRoutes = require("./routes/PaymentRoute")
 
 
 app.use(cors({
@@ -26,6 +27,7 @@ app.use("/api", profileUser)
 app.use('/api/auth', authRoutes);
 app.use("/api/patner", patnerRoutes);
 app.use("/delete", deleteroutes);
+app.use("/api/payment", paymentRoutes);
 
 db();
 app.listen(3000, ()=>
