@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema({
     default: "Male",
   },
   password: String,
-  emailOTP: String,
-  phoneOTP: String,
+  // emailOTP: String,
+  // phoneOTP: String,
   profileImage: { 
     type: String,  // you can store a URL for the image here
     default: "https://img.freepik.com/free-psd/contact-icon-illustration-isolated_23-2151903337.jpg?t=st=1746177507~exp=1746181107~hmac=dee8c5e1b4e2f4af2c284b22413fb56a35d8a84c3ea9bfe101652a15dc7a60cc&w=826"    // optional, default to an empty string or a placeholder image

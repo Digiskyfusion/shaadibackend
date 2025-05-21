@@ -17,7 +17,7 @@ const protect = async (req, res, next) => {
         const email= decoded.email
         
         const user = await User.findOne({email});
-        // console.log(user);
+        console.log("full user",user);
         
         if (!user) {
             return res.status(404).json({ message: 'User not found' });

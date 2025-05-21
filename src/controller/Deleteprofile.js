@@ -14,6 +14,8 @@ const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
  const DeleteUser=async (req, res) => {
   const userId = req.user.id;
+  console.log("userId", userId);
+  
   const { reason } = req.body;
 
   if (!reason) {
@@ -22,6 +24,8 @@ const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
   try {
     const user = await User.findById(userId);
+    console.log(user);
+    
     console.log(user.firstName);
     
     if (!user) return res.status(404).json({ message: 'User not found' });
