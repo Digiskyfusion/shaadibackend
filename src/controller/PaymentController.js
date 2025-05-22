@@ -100,6 +100,8 @@ const Receipt  = require("../model/reciept.js");
     const { userId } = req.params;
     const receipts = await Receipt.find({ userId }).sort({ createdAt: -1 });
     res.status(200).json(receipts);
+    console.log(receipts);
+    
   } catch (err) {
     console.error("Error fetching receipts:", err);
     res.status(500).json({ error: "Failed to fetch receipts." });

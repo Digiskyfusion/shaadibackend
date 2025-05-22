@@ -4,7 +4,7 @@ const {DeleteUser, requestDeleteProfile,confirmDeleteProfile, resendDeleteOTPs}=
 const protect= require("../middleware/authMiddleware")
 
 
-router.route('/delete-profile').post(protect,DeleteUser);
+router.route('/delete-profile/:userId').post(protect,DeleteUser);
 router.route('/delete-profile/request').post(protect,requestDeleteProfile);
 router.route('/delete-profile/confirm').post(protect,confirmDeleteProfile);
 router.route('/resend-delete-otp').post(protect,resendDeleteOTPs);
