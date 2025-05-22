@@ -12,7 +12,7 @@ const paymentRoutes = require("./routes/PaymentRoute")
 
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://shaadi-ruby.vercel.app/'], // Add allowed origins
+    origin: ['http://localhost:5173', 'https://shaadi-ruby.vercel.app'], // Add allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
