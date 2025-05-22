@@ -313,5 +313,33 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const connectHandler = async (req, res) => {
+  try {
+    const userId = req.params.userId // assuming user ID is available from auth middleware
+    console.log(userId);
+    
 
-module.exports ={multiForm,login,getById,updateUser,getBygender,getProfileWithUser,forgetPassword,resetPassword};
+    const user = await User.findById(userId);
+  
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.credits <= 0) {
+      return res.status(400).json({ message: "Not enough credits" });
+    }
+
+    // Deduct 1 credit
+    user.credits -= 1;
+    await user.save();
+      console.log("userrrrrr",user)
+
+    return res.status(200).json({ message: "Connected successfully", creditsLeft: user.credits });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error", error : err.message });
+  }
+};
+
+module.exports ={multiForm,login,getById,updateUser,getBygender,getProfileWithUser,forgetPassword,resetPassword,connectHandler};
