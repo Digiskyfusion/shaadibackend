@@ -6,6 +6,10 @@ const randomstring   = require("randomstring");
 const sendMailNodemailer  = require("../utils/emailSender");
 
 
+let URL= process.env.FRONTEND_URL
+// console.log(URL);
+
+
 const multiForm = async (req, res) => {
   try {
     let { emailId, password, mobileNumber, ...otherData } = req.body;
@@ -221,7 +225,7 @@ const forgetPassword = async (req, res) => {
   try {
       let { emailId } = req.body;
       let user = await User.findOne({ emailId });
-      console.log(user.firstName);
+      console.log(user);
       
     
       
@@ -237,7 +241,7 @@ const forgetPassword = async (req, res) => {
               text: "hello",
               html: `<p>Hi ${user.firstName},</p>
               <p>Please click the link below to reset your password:</p>
-              <a href="http://localhost:5173/reset-password?token=${randomString}" target="_blank">Reset Password</a>
+              <a href="https://shaadi-mu.vercel.app/reset-password?token=${randomString}" target="_blank">Reset Password</a>
               <p>If you did not request this, please ignore this email.</p>`,
             });
         
