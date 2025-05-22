@@ -178,7 +178,7 @@ const getById = async (req, res) => {
 // signle user by profile
 const getProfileWithUser = async (req, res) => {
   try {
-    const profile = await Profile.findOne({ userId: req.params.userId }).populate('userId', 'firstName  lastName profileImage dob emailId mobileNumber gender')
+    const profile = await Profile.findOne({ userId: req.params.userId }).populate('userId', 'firstName  lastName profileImage dob emailId mobileNumber gender credits')
     // .populate('religion.userId','age religion height growup diet community healthinformation disability gothram highestqualification workingwith currentresidence stateofresidence residencystatus zippincode'); // Populating partner preferences;
     
     if (!profile) {
