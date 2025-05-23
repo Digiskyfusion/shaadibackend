@@ -23,7 +23,80 @@ const Receipt  = require("../model/reciept.js");
 };
 
 // Verify Payment and Save Receipt
-//  const verifyPayment = async (req, res) => {
+ const verifyPayment = async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    userId,
+    plan,
+    planName,
+  } = req.body;
+
+  try {
+    // Step 1: Verify signature
+    const generated_signature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest("hex");
+      console.log("generaet",generated_signature);
+      console.log("razorpay",razorpay_signature);
+      
+      
+
+    if (generated_signature !== razorpay_signature) {
+      return res.status(400).json({ error: "Invalid signature" });
+    }
+
+    // Step 2: Get user
+    const user = await User.findById(userId);
+    console.log(user);
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Step 3: Credits to add
+    const creditsToAdd = parseInt(plan);
+    if (isNaN(creditsToAdd)) {
+      return res.status(400).json({ error: "Invalid plan value" });
+    }
+
+    // Step 4: Update user credits
+    user.credits = (user.credits || 0) + creditsToAdd;
+    await user.save();
+
+    // Step 5: Create and save receipt
+    const savedReceipt = new Receipt({
+      userId: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.emailId,
+      mobileNumber: user.mobileNumber,
+      creditsAdded: creditsToAdd,
+      totalCredits: user.credits,
+      planName: planName || "Custom Plan",
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      paymentDate: new Date(),
+    });
+
+    await savedReceipt.save();
+
+    // Step 6: Respond
+    res.status(200).json({
+      message: `Payment verified successfully.`,
+      receipt: savedReceipt,
+    });
+  } catch (err) {
+    console.error("Error verifying payment:", err);
+    res.status(500).json({ error: "Failed to verify payment and update credits." });
+  }
+};
+
+
+//without increase payment verify
+// const verifyPayment = async (req, res) => {
 //   const {
 //     razorpay_order_id,
 //     razorpay_payment_id,
@@ -39,10 +112,9 @@ const Receipt  = require("../model/reciept.js");
 //       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
 //       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
 //       .digest("hex");
-//       console.log("generaet",generated_signature);
-//       console.log("razorpay",razorpay_signature);
-      
-      
+
+//     console.log("generated:", generated_signature);
+//     console.log("razorpay:", razorpay_signature);
 
 //     if (generated_signature !== razorpay_signature) {
 //       return res.status(400).json({ error: "Invalid signature" });
@@ -50,31 +122,26 @@ const Receipt  = require("../model/reciept.js");
 
 //     // Step 2: Get user
 //     const user = await User.findById(userId);
-//     console.log(user);
-    
 //     if (!user) {
 //       return res.status(404).json({ error: "User not found" });
 //     }
 
-//     // Step 3: Credits to add
+//     // Step 3: (Skip updating user credits)
 //     const creditsToAdd = parseInt(plan);
 //     if (isNaN(creditsToAdd)) {
 //       return res.status(400).json({ error: "Invalid plan value" });
 //     }
 
-//     // Step 4: Update user credits
-//     user.credits = (user.credits || 0) + creditsToAdd;
-//     await user.save();
-
-//     // Step 5: Create and save receipt
+//     // Step 4: Just create and save receipt (keep totalCredits unchanged)
 //     const savedReceipt = new Receipt({
 //       userId: user._id,
 //       firstName: user.firstName,
 //       lastName: user.lastName,
 //       email: user.emailId,
 //       mobileNumber: user.mobileNumber,
-//       creditsAdded: creditsToAdd,
-//       totalCredits: user.credits,
+//       // amount: amount || 0, // 👈 Add this line to show plan price
+//       // creditsAdded: creditsToAdd,
+//       // totalCredits: user.credits || 0,  // unchanged
 //       planName: planName || "Custom Plan",
 //       paymentId: razorpay_payment_id,
 //       orderId: razorpay_order_id,
@@ -83,84 +150,16 @@ const Receipt  = require("../model/reciept.js");
 
 //     await savedReceipt.save();
 
-//     // Step 6: Respond
+//     // Step 5: Respond
 //     res.status(200).json({
 //       message: `Payment verified successfully.`,
 //       receipt: savedReceipt,
 //     });
 //   } catch (err) {
 //     console.error("Error verifying payment:", err);
-//     res.status(500).json({ error: "Failed to verify payment and update credits." });
+//     res.status(500).json({ error: "Failed to verify payment." });
 //   }
 // };
-
-
-//without increase payment verify
-const verifyPayment = async (req, res) => {
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    userId,
-    plan,
-    planName,
-    amount,
-  } = req.body;
-
-  try {
-    // Step 1: Verify signature
-    const generated_signature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    console.log("generated:", generated_signature);
-    console.log("razorpay:", razorpay_signature);
-
-    if (generated_signature !== razorpay_signature) {
-      return res.status(400).json({ error: "Invalid signature" });
-    }
-
-    // Step 2: Get user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Step 3: (Skip updating user credits)
-    const creditsToAdd = parseInt(plan);
-    if (isNaN(creditsToAdd)) {
-      return res.status(400).json({ error: "Invalid plan value" });
-    }
-
-    // Step 4: Just create and save receipt (keep totalCredits unchanged)
-    const savedReceipt = new Receipt({
-      userId: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.emailId,
-      mobileNumber: user.mobileNumber,
-      amount: amount || 0, // 👈 Add this line to show plan price
-      // creditsAdded: creditsToAdd,
-      // totalCredits: user.credits || 0,  // unchanged
-      planName: planName || "Custom Plan",
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
-      paymentDate: new Date(),
-    });
-
-    await savedReceipt.save();
-
-    // Step 5: Respond
-    res.status(200).json({
-      message: `Payment verified successfully.`,
-      receipt: savedReceipt,
-    });
-  } catch (err) {
-    console.error("Error verifying payment:", err);
-    res.status(500).json({ error: "Failed to verify payment." });
-  }
-};
 
 
 // Optional: Get all receipts for a user
