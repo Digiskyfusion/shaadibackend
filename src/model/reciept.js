@@ -6,8 +6,9 @@ const receiptSchema = new mongoose.Schema({
   lastName: String,
   email: String,
   mobileNumber: String,
-  creditsAdded: Number,
-  totalCredits: Number,
+   amount: Number, // 👈 Add this field
+  // creditsAdded: Number,
+  // totalCredits: Number,
   planName: String,
   paymentId: String,
   orderId: String,
