@@ -29,7 +29,7 @@ const profileModel = require("../model/ProfileSchema");
 
 const profileByCity = async (req, res) => {
     try {
-        const userId = req.params.userid;
+        const userId = req.params.userId;
         console.log("Request for userId:", userId);
 
         // Find the current user's profile
