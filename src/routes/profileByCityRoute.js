@@ -3,6 +3,6 @@ const router= express.Router();
 const profileByCity = require("../controller/profileByCity");
 const protect= require("../middleware/authMiddleware")
 
-router.route("/profilebycity").get(protect,profileByCity.profileByCity);
+router.route("/profilebycity/:userid").get(profileByCity.profileByCity);
 
 module.exports= router;
