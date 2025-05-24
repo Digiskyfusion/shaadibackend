@@ -9,7 +9,8 @@ const authRoutes= require("./routes/authRoute")
 const patnerRoutes= require("./routes/patnerRoute")
 const deleteroutes= require("./routes/DeleteprofileRoute")
 const paymentRoutes = require("./routes/PaymentRoute")
-const clickButton= require("./routes/clickButtonRoute")
+const profileByCityRoute = require("./routes/profileByCityRoute")
+// const clickButton= require("./routes/clickButtonRoute")
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://shaadi-ruby.vercel.app','https://www.shaadisanskar.com'], // Add allowed origins
@@ -28,7 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use("/api/patner", patnerRoutes);
 app.use("/delete", deleteroutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/click", clickButton);
+// app.use("/click", clickButton);
+app.use("/city",profileByCityRoute);
 
 db();
 app.listen(3000, ()=>
