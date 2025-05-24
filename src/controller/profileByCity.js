@@ -60,8 +60,6 @@ const profileByCity = async (req, res) => {
     }
 };
 
-module.exports = { profileByCity };
-
 
 
 module.exports = { profileByCity };
