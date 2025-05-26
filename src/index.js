@@ -10,6 +10,7 @@ const patnerRoutes= require("./routes/patnerRoute")
 const deleteroutes= require("./routes/DeleteprofileRoute")
 const paymentRoutes = require("./routes/PaymentRoute")
 const profileByCityRoute = require("./routes/profileByCityRoute")
+const imageRoutes = require("./routes/imageRoutes");
 // const clickButton= require("./routes/clickButtonRoute")
 
 app.use(cors({
@@ -31,7 +32,7 @@ app.use("/delete", deleteroutes);
 app.use("/api/payment", paymentRoutes);
 // app.use("/click", clickButton);
 app.use("/city",profileByCityRoute);
-
+app.use("/api/images", imageRoutes);
 db();
 app.listen(3000, ()=>
 {
