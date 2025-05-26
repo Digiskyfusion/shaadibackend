@@ -174,11 +174,6 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-  
-   allImages: {
-  type: [String],
-  default: []
-}
   },
   {
     timestamps: true,

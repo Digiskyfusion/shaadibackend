@@ -10,6 +10,55 @@ let URL= process.env.FRONTEND_URL
 // console.log(URL);
 
 
+// const multiForm = async (req, res) => {
+//   try {
+//     let { emailId, password, mobileNumber, ...otherData } = req.body;
+
+//     if (!password) {
+//       return res.status(400).json({ error: "Password is required in the second step" });
+//     }
+
+//     emailId = emailId.trim().toLowerCase();
+
+//     // Check if user exists
+//     const existingUser = await User.findOne({ emailId });
+//     if (existingUser) {
+//       return res.status(400).json({ error: "An account with this email already exists" });
+//     }
+
+//     // Hash the password
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+
+//     // Save new user
+//     const newUser = new User({
+//       emailId,
+//       mobileNumber,
+//       password: hashedPassword,
+//       ...otherData,
+//     });
+
+//     await newUser.save();
+
+//     // Create JWT token
+//     const payload = { id: newUser._id, emailId: newUser.emailId , mobileNumber};
+//     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
+
+//     res.status(201).json({
+//       message: "User registered successfully",
+//       token,
+//       user: {
+//         id: newUser._id,
+//         emailId: newUser.emailId,
+//         mobileNumber:mobileNumber,
+//         ...otherData
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error in user registration:", error.message);
+//     res.status(500).json({ error: "Server error. Please try again later." });
+//   }
+// };
 const multiForm = async (req, res) => {
   try {
     let { emailId, password, mobileNumber, ...otherData } = req.body;
@@ -20,10 +69,16 @@ const multiForm = async (req, res) => {
 
     emailId = emailId.trim().toLowerCase();
 
-    // Check if user exists
-    const existingUser = await User.findOne({ emailId });
-    if (existingUser) {
+    // Check if user with this email already exists
+    const existingEmailUser = await User.findOne({ emailId });
+    if (existingEmailUser) {
       return res.status(400).json({ error: "An account with this email already exists" });
+    }
+
+    // Check if user with this mobile number already exists
+    const existingMobileUser = await User.findOne({ mobileNumber });
+    if (existingMobileUser) {
+      return res.status(400).json({ error: "An account with this mobile number already exists" });
     }
 
     // Hash the password
@@ -41,7 +96,7 @@ const multiForm = async (req, res) => {
     await newUser.save();
 
     // Create JWT token
-    const payload = { id: newUser._id, emailId: newUser.emailId , mobileNumber};
+    const payload = { id: newUser._id, emailId: newUser.emailId, mobileNumber };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
 
     res.status(201).json({
@@ -50,7 +105,7 @@ const multiForm = async (req, res) => {
       user: {
         id: newUser._id,
         emailId: newUser.emailId,
-        mobileNumber:mobileNumber,
+        mobileNumber: newUser.mobileNumber,
         ...otherData
       }
     });
@@ -59,6 +114,10 @@ const multiForm = async (req, res) => {
     res.status(500).json({ error: "Server error. Please try again later." });
   }
 };
+
+
+
+
 
 
 const login = async (req, res) => {

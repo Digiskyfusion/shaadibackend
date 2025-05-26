@@ -12,6 +12,7 @@ const paymentRoutes = require("./routes/PaymentRoute")
 const profileByCityRoute = require("./routes/profileByCityRoute")
 const http = require('http'); // Import http module for Socket.IO
 const socketIo = require('socket.io'); // Import socket.io
+const imageRoutes = require("./routes/imageRoutes");
 // const clickButton= require("./routes/clickButtonRoute")
 const chatRoutes = require("./routes/chat"); // Your new chat routes
 const Conversation = require('./model/chat');
@@ -48,7 +49,7 @@ app.use("/api/payment", paymentRoutes);
 // app.use("/click", clickButton);
 app.use("/city",profileByCityRoute);
 app.use('/chat', chatRoutes);
-
+app.use("/api/images", imageRoutes);
 db();
 
 io.on('connection', (socket) => {
