@@ -12,11 +12,11 @@ exports.getOrCreateConversation = async (req, res) => {
     })
     .populate({
       path: 'participants',
-      select: 'name firstName lastName image' 
+      select: 'name firstName lastName profileImage' 
     })
     .populate({
       path: 'messages.sender',
-      select: 'name firstName lastName image' 
+      select: 'name firstName lastName profileImage' 
     });
 
     if (!conversation) {
@@ -29,11 +29,11 @@ exports.getOrCreateConversation = async (req, res) => {
       conversation = await Conversation.findById(conversation._id)
         .populate({
           path: 'participants',
-          select: 'name firstName lastName email image location'
+          select: 'name firstName lastName email profileImage location'
         })
         .populate({
           path: 'messages.sender',
-          select: 'name firstName lastName image'
+          select: 'name firstName lastName profileImage'
         });
     }
 
@@ -53,8 +53,8 @@ exports.getUserConversations = async (req, res) => {
 
   try {
     const conversations = await Conversation.find({ participants: userId })
-      .populate('participants', 'name image') 
-      .populate('messages.sender', 'name image')
+      .populate('participants', 'firstName lastName email profileImage') 
+      .populate('messages.sender', 'firstName lastName email profileImage')
       .sort({ lastMessageAt: -1 }); 
 
     res.status(200).json({ success: true, data: conversations });
@@ -89,7 +89,7 @@ exports.addMessageToConversation = async (req, res) => {
 
     const populatedMessage = {
       ...newMessage,
-      sender: await User.findById(senderId, 'name image') 
+      sender: await User.findById(senderId, 'name profileImage') 
     };
 
     res.status(201).json({ success: true, data: populatedMessage, message: 'Message added successfully' });
