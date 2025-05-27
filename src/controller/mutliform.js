@@ -300,7 +300,7 @@ const forgetPassword = async (req, res) => {
               text: "hello",
               html: `<p>Hi ${user.firstName},</p>
               <p>Please click the link below to reset your password:</p>
-              <a href="https://shaadi-ruby.vercel.app/reset-password?token=${randomString}" target="_blank">Reset Password</a>
+              <a href="https://www.shaadisanskar.com/reset-password?token=${randomString}" target="_blank">Reset Password</a>
               <p>If you did not request this, please ignore this email.</p>`,
             });
         
