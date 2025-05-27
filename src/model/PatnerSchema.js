@@ -17,15 +17,15 @@ const patnerProfiles = new mongoose.Schema({
   disability: { type: String },
   gothram: { type: String },
   highestqualification: { type: String },
-  workingwith: { type: String },
-  currentresidence: { type: String },
-  stateofresidence: { type: String },
-  residencystatus: { type: String },
-  zippincode: { type: String },
-  mobile: { type: String }, // FIX: Changed to String
-  name: { type: String },
-  whatsappno: { type: String }, // FIX: Changed to String
-  emailId: { type: String },
+  // workingwith: { type: String },
+  // currentresidence: { type: String },
+  // stateofresidence: { type: String },
+  // residencystatus: { type: String },
+  // zippincode: { type: String },
+  // mobile: { type: String }, // FIX: Changed to String
+  // name: { type: String },
+  // whatsappno: { type: String }, // FIX: Changed to String
+  // emailId: { type: String },
 });
 
 module.exports = mongoose.model("patnerProfile", patnerProfiles);
