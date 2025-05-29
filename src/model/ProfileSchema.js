@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const User = require("./user"); // Make sure path is correct
 const profileSchema = new mongoose.Schema(
   {
     userId: {
@@ -180,4 +180,25 @@ const profileSchema = new mongoose.Schema(
   }
 );
 
+
+
+// ✅ Age Calculation from User's DOB
+profileSchema.pre("save", async function (next) {
+  try {
+    const user = await User.findById(this.userId);
+    if (user && user.dob) {
+      const today = new Date();
+      const birthDate = new Date(user.dob);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      this.age = age;
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = mongoose.model("Profile", profileSchema);
