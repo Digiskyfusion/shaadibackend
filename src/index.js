@@ -17,7 +17,7 @@ const imageRoutes = require("./routes/imageRoutes");
 const chatRoutes = require("./routes/chat"); // Your new chat routes
 const Conversation = require('./model/chat');
 const User = require('./model/user');
-
+const conatctRoute= require("./routes/contactRoute")
 
 const server = http.createServer(app);
 
@@ -50,6 +50,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/city",profileByCityRoute);
 app.use('/chat', chatRoutes);
 app.use("/api/images", imageRoutes);
+app.use("/contact", conatctRoute);
 db();
 
 io.on('connection', (socket) => {
