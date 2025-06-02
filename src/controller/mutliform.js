@@ -94,7 +94,7 @@ const multiForm = async (req, res) => {
     });
     await sendMailNodemailer({
               to: emailId,
-              subject: "Welcome to  shadi sanskar website",
+              subject: "Welcome to  shaadi sanskar website",
         text: "hello",
 html: `
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fceef0; padding: 40px 20px;">
