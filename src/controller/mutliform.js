@@ -92,6 +92,25 @@ const multiForm = async (req, res) => {
       password: hashedPassword,
       ...otherData,
     });
+    await sendMailNodemailer({
+              to: emailId,
+              subject: "Welcome to  shadi sanskar website",
+        text: "hello",
+html: `
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fceef0; padding: 40px 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+    <h2 style="color: #d32f2f; font-size: 26px; margin-bottom: 20px;">💖 Welcome to Shaadi Sanskar,<br/> ${newUser.firstName} ${newUser.lastName}!</h2>
+    <p style="font-size: 16px; color: #444;">We're delighted to have you join our growing family of individuals looking for love, companionship, and a beautiful future.</p>
+    <p style="font-size: 16px; color: #444;">Your account has been <strong style="color: #d32f2f;">successfully registered</strong>. You're now ready to begin your journey toward a meaningful connection.</p>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <p style="font-size: 14px; color: #777;">If you have any questions or need support, feel free to reach out to our team anytime.</p>
+    <p style="font-size: 14px; margin-top: 20px; color: #777;">Warm regards,<br/><strong style="color: #d32f2f;">The Shaadi Sanskar Team</strong></p>
+  </div>
+</div>
+`
+            });
 
     await newUser.save();
 

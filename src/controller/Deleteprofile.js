@@ -6,7 +6,7 @@
   const otpGenerator = require('otp-generator');
   const twilio = require('twilio');
   const jwt = require('jsonwebtoken');
-  const sendEmail = require('../utils/emailSender.js'); // 👈 Import the utility
+  const sendMailNodemailer = require('../utils/emailSender.js'); // 👈 Import the utility
   const receipt = require("../model/reciept.js")
 
   const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -71,6 +71,29 @@
         emailId: user.emailId,
         gender: user.gender,
       });
+await sendMailNodemailer({
+  to: user.emailId,
+  subject: "Your Shaadi Sanskar Account Has Been Deleted",
+  text: "Your account has been deleted.",
+  html: `
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff3f3; padding: 40px 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+      <h2 style="color: #b71c1c; font-size: 24px; margin-bottom: 20px;">Account Deleted – Shaadi Sanskar</h2>
+      <p style="font-size: 16px; color: #444;">Dear ${user.firstName} ${user.lastName},</p>
+      <p style="font-size: 16px; color: #444;">This is to confirm that your account on <strong>Shaadi Sanskar</strong> has been <strong style="color: #b71c1c;">successfully deleted</strong>.</p>
+      
+      <p style="font-size: 16px; color: #444;">We’re sorry to see you go, and we sincerely hope your journey toward companionship continues with joy and success.</p>
+      
+      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+      
+      <p style="font-size: 14px; color: #777;">If this was a mistake or you wish to rejoin, feel free to contact our support team anytime.</p>
+      <p style="font-size: 14px; margin-top: 20px; color: #777;">Warm regards,<br/><strong style="color: #b71c1c;">The Shaadi Sanskar Team</strong></p>
+    </div>
+  </div>
+  `
+});
+
+      
 
       // Now delete user and related collections
       await User.findByIdAndDelete(targetUserId);
