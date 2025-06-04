@@ -51,7 +51,7 @@ const getImages = async (req, res) => {
 // READ: Get image entry by ID
 const getImageById = async (req, res) => {
    try {
-    const { userId } = req.params;
+    const { userId } = req.params.userId;
 
     const imageEntry = await Image.findOne({ userId });
 
