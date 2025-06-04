@@ -48,6 +48,24 @@ const getImages = async (req, res) => {
   }
 };
 
+// READ: Get image entry by ID
+const getImageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const imageEntry = await Image.findById(id);
+
+    if (!imageEntry) {
+      return res.status(404).json({ error: "Image entry not found" });
+    }
+
+    res.status(200).json(imageEntry);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
 // UPDATE: Update image array by ID
 const updateImages = async (req, res) => {
   try {
@@ -91,4 +109,5 @@ module.exports = {
   getImages,
   updateImages,
   deleteImages,
+  getImageById
 };
