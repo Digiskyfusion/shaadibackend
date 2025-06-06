@@ -272,6 +272,20 @@ const getProfileWithUser = async (req, res) => {
   }
 };
 
+// const getProfileWithUser = async (req, res) => {
+//   try {
+//     const profile = await Profile.findOne({ userId: req.params.userId }).populate('userId', 'firstName  lastName profileImage dob emailId mobileNumber gender').populate("part_pref_id");
+    
+//     if (!profile) {
+//       return res.status(404).json({ message: 'Profile not found' });
+//     }
+
+//     res.json(profile);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error });
+//   }
+// };
+
 //  update user
  const updateUser=  async (req, res) => {
   try {
