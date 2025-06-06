@@ -65,13 +65,16 @@ exports.getUserConversations = async (req, res) => {
 };
 
 exports.addMessageToConversation = async (req, res) => {
-  const { conversationId, senderId, text } = req.body;
+  const { conversationId, senderId, text, fileUrl, fileType, fileName } = req.body;
 
   try {
     const newMessage = {
       sender: senderId,
       text: text,
       timestamp: new Date(),
+      fileUrl: fileUrl,
+      fileName: fileName,
+      fileType: fileType
     };
 
     const conversation = await Conversation.findByIdAndUpdate(

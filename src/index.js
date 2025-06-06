@@ -87,6 +87,40 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('message_read', async ({ conversationId, readerId }) => {
+  try {
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) return;
+
+    let updated = false;
+
+    conversation.messages.forEach(msg => {
+      if (msg.sender.toString() !== readerId && !msg.read) {
+        msg.read = true;
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      await conversation.save();
+
+      // Find sender to notify
+      const lastSenderId = conversation.messages[conversation.messages.length - 1]?.sender?.toString();
+
+      // Broadcast to other users in the conversation
+      io.to(conversationId).emit('messages_read', {
+        conversationId,
+        readerId,
+      });
+    }
+
+  } catch (err) {
+    console.error("Error in message_read socket event:", err.message);
+  }
+});
+
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
